@@ -1,5 +1,6 @@
 package com.aggreyah.notekeeper;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -98,6 +99,15 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerItems.setAdapter(mNoteRecyclerAdapter);
 
         selectNavigationMenuItem(R.id.nav_notes);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.action_settings){
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void selectNavigationMenuItem(int id) {
