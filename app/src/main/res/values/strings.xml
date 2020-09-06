@@ -24,4 +24,8 @@
     <string name="communicate">Communicate</string>
     <string name="courses">Courses</string>
     <string name="notes">Notes</string>
+    <string name="text_note_title">Note title</string>
+    <string name="text_note_text">Note text</string>
+    <string name="nav_send_message">Send</string>
+    <string name="nav_share_message">Don\'t you think you\'ve shared enough</string>
 </resources>
