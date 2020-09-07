@@ -1,6 +1,5 @@
 package com.aggreyah.notekeeper;
 
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -45,8 +44,8 @@ public class NoteCreationTest {
         onView(withId(R.id.spinner_courses)).perform(click());
         onData(allOf(instanceOf(CourseInfo.class), equalTo(course))).perform(click());
         onView(withId(R.id.spinner_courses)).check(matches(withSpinnerText(containsString(course.getTitle()))));
-        onView(withId(R.id.text_course_title)).perform(typeText(noteTitle)).check(matches(withText(containsString(noteTitle))));
-        onView(withId(R.id.text_course_text)).perform(typeText(noteText),
+        onView(withId(R.id.text_note_title)).perform(typeText(noteTitle)).check(matches(withText(containsString(noteTitle))));
+        onView(withId(R.id.text_note_text)).perform(typeText(noteText),
                 closeSoftKeyboard()).check(matches(withText(containsString(noteText))));
         pressBack();
 

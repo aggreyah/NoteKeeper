@@ -58,8 +58,8 @@ public class NoteActivity extends AppCompatActivity {
         readDisplayStateValues();
         saveOriginalNoteValues();
 
-        mTextNoteTitle = findViewById(R.id.text_course_title);
-        mTextNoteText = findViewById(R.id.text_course_text);
+        mTextNoteTitle = findViewById(R.id.text_note_title);
+        mTextNoteText = findViewById(R.id.text_note_text);
 
         if (!mIsNewNote)
             displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
