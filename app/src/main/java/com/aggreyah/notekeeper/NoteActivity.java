@@ -234,21 +234,6 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if(mIsCancelling){
-            Log.i(TAG, "Cancelling note at mNotePosition: " + mNoteId);
-            if(mIsNewNote)
-                DataManager.getInstance().removeNote(mNoteId);
-            else{
-                storePreviousNoteValues();
-            }
-        }else
-            saveNote();
-        Log.d(TAG, "onPause");
-    }
-
-    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(ORIGINAL_NOTE_COURSE_ID, mOriginalNoteCourseId);
