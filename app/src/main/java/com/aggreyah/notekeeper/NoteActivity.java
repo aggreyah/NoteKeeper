@@ -195,6 +195,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 return null;
             }
         };
+        asyncTask.execute();
     }
 
     @Override
@@ -323,6 +324,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 return null;
             }
         };
+        asyncTask.execute();
     }
 
     private void sendEmail() {
