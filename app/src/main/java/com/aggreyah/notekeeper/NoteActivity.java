@@ -1,6 +1,7 @@
 package com.aggreyah.notekeeper;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -222,6 +223,20 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         return super.onPrepareOptionsMenu(menu);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mIsCancelling){
+            if(mIsNewNote){
+                DataManager.getInstance().removeNote(mNoteId);
+            }else{
+                storePreviousNoteValues();
+            }
+        }else{
+            saveNote();
+        }
+    }
+
     private void moveNext() {
         saveNote();
 
@@ -249,9 +264,32 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void saveNote() {
-        mNote.setCourse((CourseInfo) mSpinnerCourses.getSelectedItem());
-        mNote.setTitle(mTextNoteTitle.getText().toString());
-        mNote.setText(mTextNoteText.getText().toString());
+        String courseId = selectedCourseId();
+        String noteTitle = mTextNoteTitle.getText().toString();
+        String noteText = mTextNoteText.getText().toString();
+        saveNoteToDataBase(courseId,noteTitle, noteText);
+    }
+
+    private String selectedCourseId() {
+        int selectedItemPosition = mSpinnerCourses.getSelectedItemPosition();
+        Cursor cursor = mAdapterCourses.getCursor();
+        cursor.moveToPosition(selectedItemPosition);
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        String courseId = cursor.getString(courseIdPos);
+        return courseId;
+    }
+
+    private void saveNoteToDataBase(String courseId, String noteTitle, String noteText){
+        String selection = NoteInfoEntry._ID + " = ?";
+        String[] selectionArgs = {Integer.toString(mNoteId)};
+
+        ContentValues values = new ContentValues();
+        values.put(NoteInfoEntry.COLUMN_COURSE_ID, courseId);
+        values.put(NoteInfoEntry.COLUMN_NOTE_TITLE, noteTitle);
+        values.put(NoteInfoEntry.COLUMN_NOTE_TEXT, noteText);
+
+        SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
+        db.update(NoteInfoEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
     private void sendEmail() {
