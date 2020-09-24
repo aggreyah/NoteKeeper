@@ -5,7 +5,7 @@ import android.provider.BaseColumns;
 
 public class NoteKeeperProviderContract {
     private NoteKeeperProviderContract(){}
-    private static final String AUTHORITY = "com.aggreyah.notekeeper.provider";
+    public static final String AUTHORITY = "com.aggreyah.notekeeper.provider";
     private static final Uri AUTHORITY_URI = Uri.parse("content://" + AUTHORITY);
 
     protected interface CourseIdColumns{
