@@ -1,10 +1,7 @@
 package com.aggreyah.notekeeper;
 
-import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -12,8 +9,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +26,8 @@ import android.widget.Spinner;
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
 
-public class NoteActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class NoteActivity extends AppCompatActivity implements
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int LOADER_NOTES = 0;
     public static final int LOADER_COURSES = 1;
@@ -81,7 +83,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         mAdapterCourses.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinnerCourses.setAdapter(mAdapterCourses);
         
-        getLoaderManager().initLoader(LOADER_COURSES, null, this);
+        LoaderManager.getInstance(this).initLoader(LOADER_COURSES, null, this);
 
         readDisplayStateValues();
         if(savedInstanceState == null)
@@ -93,8 +95,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         mTextNoteText = findViewById(R.id.text_note_text);
 
         if (!mIsNewNote)
-            getLoaderManager().initLoader(LOADER_NOTES, null, this);
-        Log.d(TAG, "onCreate");
+            LoaderManager.getInstance(this).initLoader(LOADER_NOTES, null, this);
     }
 
     private void loadCourseData() {
@@ -119,7 +120,6 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
                 NoteInfoEntry.COLUMN_NOTE_TITLE,
                 NoteInfoEntry.COLUMN_NOTE_TEXT
         };
-
         mNoteCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns, selection,
                 selectionArgs, null, null, null);
         mCourseIdPos = mNoteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
@@ -130,9 +130,9 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void restoreOriginalNoteValues(Bundle savedInstanceState){
-        mOriginalNoteCourseId = mNote.getCourse().getCourseId();
-        mOriginalNoteTitle = mNote.getTitle();
-        mOriginalNoteText = mNote.getText();
+        mOriginalNoteCourseId = savedInstanceState.getString(ORIGINAL_NOTE_COURSE_ID);
+        mOriginalNoteTitle = savedInstanceState.getString(ORIGINAL_NOTE_TITLE);
+        mOriginalNoteText = savedInstanceState.getString(ORIGINAL_NOTE_TEXT);
     }
 
     private void saveOriginalNoteValues() {
@@ -148,8 +148,8 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         String noteTitle = mNoteCursor.getString(mNoteTitlePos);
         String noteText = mNoteCursor.getString(mNoteTextPos);
 
-
         int courseIndex = getIndexOfCourseId(courseId);
+
         mSpinnerCourses.setSelection(courseIndex);
         mTextNoteTitle.setText(noteTitle);
         mTextNoteText.setText(noteText);
@@ -241,6 +241,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onPause() {
         super.onPause();
         if (mIsCancelling){
+            Log.i(TAG, "Cancelling new note at position: " + mNoteId);
             if(mIsNewNote){
                 deleteNoteFromDatabase();
             }else{
@@ -249,6 +250,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         }else{
             saveNote();
         }
+        Log.d(TAG, "onPause");
     }
 
     private void deleteNoteFromDatabase() {
@@ -341,8 +343,9 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
         startActivity(mailIntent);
     }
 
+    @NonNull
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         CursorLoader loader = null;
         if(id == LOADER_NOTES)
             loader = createLoaderNotes();
@@ -385,7 +388,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if (loader.getId() == LOADER_NOTES) {
             loadFinishedNotes(data);
         } else if (loader.getId() == LOADER_COURSES) {
@@ -411,7 +414,7 @@ public class NoteActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull androidx.loader.content.Loader<Cursor> loader) {
         if(loader.getId() == LOADER_NOTES) {
             if (mNoteCursor != null)
                 mNoteCursor.close();
