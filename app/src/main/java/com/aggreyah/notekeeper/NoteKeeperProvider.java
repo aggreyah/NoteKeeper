@@ -9,8 +9,8 @@ import android.net.Uri;
 
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
-import com.aggreyah.notekeeper.NoteKeeperProviderContract.Courses;
-import com.aggreyah.notekeeper.NoteKeeperProviderContract.Notes;
+import com.aggreyah.notekeeper.NoteKeeperProviderContract.CoursesTable;
+import com.aggreyah.notekeeper.NoteKeeperProviderContract.NotesTable;
 
 public class NoteKeeperProvider extends ContentProvider {
     private NoteKeeperOpenHelper mDbOpenHelper;
@@ -21,8 +21,8 @@ public class NoteKeeperProvider extends ContentProvider {
     public static final int NOTES = 1;
 
     static {
-        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, Courses.PATH, COURSES);
-        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, Notes.PATH, NOTES);
+        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, CoursesTable.PATH, COURSES);
+        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NotesTable.PATH, NOTES);
     }
     public NoteKeeperProvider() {
     }

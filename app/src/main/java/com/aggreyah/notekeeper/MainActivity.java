@@ -1,10 +1,6 @@
 package com.aggreyah.notekeeper;
 
-import android.app.LoaderManager;
-import android.content.ClipData;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,6 +30,9 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import java.util.List;
 
@@ -97,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(LOADER_NOTES, null, this);
+        LoaderManager.getInstance(this).restartLoader(LOADER_NOTES, null, this);
         updateNavHeader();
     }
 

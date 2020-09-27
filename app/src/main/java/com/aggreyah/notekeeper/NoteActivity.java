@@ -25,6 +25,7 @@ import android.widget.Spinner;
 
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
+import com.aggreyah.notekeeper.NoteKeeperProviderContract.CoursesTable;
 
 public class NoteActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -356,14 +357,14 @@ public class NoteActivity extends AppCompatActivity implements
 
     private CursorLoader createLoaderCourses() {
         mCoursesQueryFinished = false;
-        Uri uri = Uri.parse("content://com.aggreyah.notekeeper.provider");
+        Uri uri = CoursesTable.CONTENT_URI;
         String[] courseColumns = {
-                CourseInfoEntry.COLUMN_COURSE_TITLE,
-                CourseInfoEntry.COLUMN_COURSE_ID,
-                CourseInfoEntry._ID
+                CoursesTable.COLUMN_COURSE_TITLE,
+                CoursesTable.COLUMN_COURSE_ID,
+                CoursesTable._ID
         };
         return new CursorLoader(this, uri, courseColumns, null, null,
-                CourseInfoEntry.COLUMN_COURSE_TITLE);
+                CoursesTable.COLUMN_COURSE_TITLE);
     }
 
     private CursorLoader createLoaderNotes() {

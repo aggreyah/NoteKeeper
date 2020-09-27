@@ -21,13 +21,13 @@ public class NoteKeeperProviderContract {
         public static final String COLUMN_NOTE_TEXT = "note_text";
     }
 
-    public static final class Courses implements BaseColumns, CoursesColumns, CourseIdColumns{
+    public static final class CoursesTable implements BaseColumns, CoursesColumns, CourseIdColumns{
         public static final String PATH = "courses";
 //        content://com.aggreyah.notekeeper.provider/courses
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, PATH);
     }
 
-    public static final class Notes implements BaseColumns, NotesColumns, CourseIdColumns{
+    public static final class NotesTable implements BaseColumns, NotesColumns, CourseIdColumns{
         public static final String PATH = "notes";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(AUTHORITY_URI, PATH);
     }
