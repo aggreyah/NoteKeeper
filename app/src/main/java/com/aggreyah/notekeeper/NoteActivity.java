@@ -256,8 +256,7 @@ public class NoteActivity extends AppCompatActivity implements
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-                db.delete(NoteInfoEntry.TABLE_NAME, selection, selectionArgs);
+                getContentResolver().delete(mNoteUri, null, null);
                 return null;
             }
         };
@@ -307,8 +306,6 @@ public class NoteActivity extends AppCompatActivity implements
     }
 
     private void saveNoteToDataBase(String courseId, String noteTitle, String noteText){
-        final String selection = NoteInfoEntry._ID + " = ?";
-        final String[] selectionArgs = {Integer.toString(mNoteId)};
 
         final ContentValues values = new ContentValues();
         values.put(NoteInfoEntry.COLUMN_COURSE_ID, courseId);
@@ -318,8 +315,7 @@ public class NoteActivity extends AppCompatActivity implements
         AsyncTask asyncTask = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
-                SQLiteDatabase db = mDbOpenHelper.getWritableDatabase();
-                db.update(NoteInfoEntry.TABLE_NAME, values, selection, selectionArgs);
+                getContentResolver().update(mNoteUri, values, null, null);
                 return null;
             }
         };
@@ -401,7 +397,7 @@ public class NoteActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLoaderReset(@NonNull androidx.loader.content.Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         if(loader.getId() == LOADER_NOTES) {
             if (mNoteCursor != null)
                 mNoteCursor.close();

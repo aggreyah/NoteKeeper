@@ -1,6 +1,7 @@
 package com.aggreyah.notekeeper;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -16,6 +17,7 @@ import com.aggreyah.notekeeper.NoteKeeperProviderContract.NotesTable;
 import com.aggreyah.notekeeper.NoteKeeperProviderContract.CoursesIdColumns;
 
 public class NoteKeeperProvider extends ContentProvider {
+    public static final String MIME_VENDOR_TYPE = "vnd." + NoteKeeperProviderContract.AUTHORITY + ".";
     private NoteKeeperOpenHelper mDbOpenHelper;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -30,7 +32,7 @@ public class NoteKeeperProvider extends ContentProvider {
     static {
         sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, CoursesTable.PATH, COURSES);
         sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NotesTable.PATH, NOTES);
-        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NotesTable.PATH_EXPANDED, NOTES_EXTENDED);
+        sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NotesTable.PATH_EXTENDED, NOTES_EXTENDED);
         sUriMatcher.addURI(NoteKeeperProviderContract.AUTHORITY, NotesTable.PATH + "/#", NOTES_ROW);
     }
     public NoteKeeperProvider() {
@@ -44,9 +46,32 @@ public class NoteKeeperProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        // TODO: Implement this to handle requests for the MIME type of the data
-        // at the given URI.
-        throw new UnsupportedOperationException("Not yet implemented");
+        String mimeType = null;
+        int uriMatch = sUriMatcher.match(uri);
+        switch (uriMatch){
+            case COURSES:
+                // this mime type may return multiple rows.
+                /**custom mime types specific to an application as opposed to generic are prefixed
+                 * by vnd
+                 **/
+                //vnd.android.cursor.dir/vnd.com.aggreyah.notekeeper.provider.courses.
+                mimeType = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
+                        MIME_VENDOR_TYPE + CoursesTable.PATH;
+                break;
+            case NOTES:
+                mimeType = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
+                        MIME_VENDOR_TYPE + NotesTable.PATH;
+                break;
+            case NOTES_EXTENDED:
+                mimeType = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
+                        MIME_VENDOR_TYPE + NotesTable.PATH_EXTENDED;
+                break;
+            case NOTES_ROW:
+                mimeType = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" +
+                        MIME_VENDOR_TYPE + NotesTable.PATH;
+        }
+
+        return mimeType;
     }
 
     @Override
