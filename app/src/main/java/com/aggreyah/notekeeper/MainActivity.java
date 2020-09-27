@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.CourseInfoEntry;
 import com.aggreyah.notekeeper.NoteKeeperDatabaseContract.NoteInfoEntry;
+import com.aggreyah.notekeeper.NoteKeeperProviderContract.NotesTable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -231,26 +232,15 @@ public class MainActivity extends AppCompatActivity implements
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         CursorLoader loader = null;
         if(id == LOADER_NOTES){
-            loader = new CursorLoader(this){
-                @Override
-                public Cursor loadInBackground() {
-                    SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
-                    final String[] noteColumns = {
-                            NoteInfoEntry.COLUMN_NOTE_TITLE,
-                            NoteInfoEntry.getQName(NoteInfoEntry._ID),
-                            CourseInfoEntry.COLUMN_COURSE_TITLE
-                    };
-                    String noteOrderBy = CourseInfoEntry.COLUMN_COURSE_TITLE + "," +
-                            NoteInfoEntry.COLUMN_NOTE_TITLE;
-
-                    //course_info JOIN note_info ON course_info.course_id = note_info.course_id
-                    String tablesWithJoin = NoteInfoEntry.TABLE_NAME + " JOIN " +
-                            CourseInfoEntry.TABLE_NAME + " ON " + NoteInfoEntry.getQName(NoteInfoEntry.COLUMN_COURSE_ID)
-                            + " = " + CourseInfoEntry.getQName(CourseInfoEntry.COLUMN_COURSE_ID);
-                    return db.query(tablesWithJoin, noteColumns,
-                            null, null, null, null, noteOrderBy);
-                }
+            final String[] noteColumns = {
+                    NotesTable._ID,
+                    NotesTable.COLUMN_NOTE_TITLE,
+                    NotesTable.COLUMN_COURSE_TITLE
             };
+            String noteOrderBy = NotesTable.COLUMN_COURSE_TITLE + "," +
+                    NotesTable.COLUMN_NOTE_TITLE;
+            loader = new CursorLoader(this, NotesTable.CONTENT_EXPANDED_URI, noteColumns, null
+            , null, noteOrderBy);
         }
         return loader;
     }
