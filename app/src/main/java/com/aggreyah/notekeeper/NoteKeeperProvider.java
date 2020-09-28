@@ -188,7 +188,39 @@ public class NoteKeeperProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        long rowId = -1;
+        String rowSelection = null;
+        String[] rowSelectionArgs = null;
+        int nRows = -1;
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        int uriMatch = sUriMatcher.match(uri);
+        switch(uriMatch) {
+            case COURSES:
+                nRows = db.update(CourseInfoEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case NOTES:
+                nRows = db.update(NoteInfoEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            case NOTES_EXTENDED:
+                // throw exception saying that this is a read-only table
+            case COURSES_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = CourseInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                nRows = db.update(CourseInfoEntry.TABLE_NAME, values, rowSelection, rowSelectionArgs);
+                break;
+            case NOTES_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = NoteInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                nRows = db.update(NoteInfoEntry.TABLE_NAME, values, rowSelection, rowSelectionArgs);
+                break;
+            case NOTES_EXTENDED_ROW:
+                // throw exception saying that this is a read-only table
+                break;
+        }
+
+        return nRows;
     }
 }
