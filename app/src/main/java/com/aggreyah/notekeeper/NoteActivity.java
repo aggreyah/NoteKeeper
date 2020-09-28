@@ -250,8 +250,6 @@ public class NoteActivity extends AppCompatActivity implements
     }
 
     private void deleteNoteFromDatabase() {
-        final String selection = NoteInfoEntry._ID + " = ?";
-        final String[] selectionArgs = {Integer.toString(mNoteId)};
 
         AsyncTask task = new AsyncTask() {
             @Override

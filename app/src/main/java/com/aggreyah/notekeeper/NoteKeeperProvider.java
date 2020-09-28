@@ -18,6 +18,8 @@ import com.aggreyah.notekeeper.NoteKeeperProviderContract.CoursesIdColumns;
 
 public class NoteKeeperProvider extends ContentProvider {
     public static final String MIME_VENDOR_TYPE = "vnd." + NoteKeeperProviderContract.AUTHORITY + ".";
+    public static final int COURSES_ROW = 4;
+    public static final int NOTES_EXTENDED_ROW = 5;
     private NoteKeeperOpenHelper mDbOpenHelper;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -40,8 +42,39 @@ public class NoteKeeperProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        long rowId = -1;
+        String rowSelection = null;
+        String[] rowSelectionArgs = null;
+        int nRows = -1;
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+
+        int uriMatch = sUriMatcher.match(uri);
+        switch(uriMatch) {
+            case COURSES:
+                nRows = db.delete(CourseInfoEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case NOTES:
+                nRows = db.delete(NoteInfoEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            case NOTES_EXTENDED:
+                // throw exception saying that this is a read-only table
+            case COURSES_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = CourseInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                nRows = db.delete(CourseInfoEntry.TABLE_NAME, rowSelection, rowSelectionArgs);
+                break;
+            case NOTES_ROW:
+                rowId = ContentUris.parseId(uri);
+                rowSelection = NoteInfoEntry._ID + " = ?";
+                rowSelectionArgs = new String[]{Long.toString(rowId)};
+                nRows = db.delete(NoteInfoEntry.TABLE_NAME, rowSelection, rowSelectionArgs);
+                break;
+            case NOTES_EXTENDED_ROW:
+                // throw exception saying that this is a read-only table
+                break;
+        }
+        return nRows;
     }
 
     @Override
