@@ -241,7 +241,9 @@ public class NoteActivity extends AppCompatActivity implements
     }
 
     private void simulateLongRunningWork() {
-        SystemClock.sleep(2000);
+        try {
+            Thread.sleep(2000);
+        } catch(Exception ex) {}
     }
 
     private void displaySnackBar(String toString) {
