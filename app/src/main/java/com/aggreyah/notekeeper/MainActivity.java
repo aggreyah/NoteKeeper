@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -114,7 +116,18 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
         LoaderManager.getInstance(this).restartLoader(LOADER_NOTES, null, this);
         updateNavHeader();
-//        openDrawer();
+        openDrawer();
+    }
+
+    private void openDrawer() {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                drawer.openDrawer(GravityCompat.START);
+            }
+        }, 1000);
     }
 
     private void loadNotes() {
